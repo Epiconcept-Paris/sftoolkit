@@ -1,0 +1,15 @@
+Package: sftoolkit
+Type: Package
+Title: 'Simple Features' toolkit
+Version: 0.1.0
+Date: 2019-02-25
+Author: Authors@R: c(person("Jean Pierre", "Decorps", role = c("aut", "cre"),
+                     email = "jp.decorps@epiconcept.fr"))
+Maintainer: Jean Pierre Decorps <jp.decorps@epiconcept.fr>
+Description: Edit and simplify 'sf' objects. This is pure R/R6 code, not a wrapper around
+    a 'javascript' library and do not uses V8 engine.
+Depends: R (>= 3.5.1), sf (>= 0.7), rlist
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1

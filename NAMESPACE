@@ -1,0 +1,8 @@
+import( "sf", "rlist")
+
+export(
+  sftk_innerlines,
+  sftk_getIslands,
+  sftk_removeIslands
+)
+
