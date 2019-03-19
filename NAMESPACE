@@ -1,8 +1,14 @@
-import( "sf", "rlist")
+import( "sf", "rlist", "lwgeom", "ggplot2")
 
 export(
-  sftk_innerlines,
-  sftk_getIslands,
-  sftk_removeIslands
+  sft_getIslands,
+  sft_innerLines,
+  sft_removeIslands
 )
 
+# sft_getIslands ------------------------------------------
+S3method(sft_getIslands, sf)
+S3method(sft_getIslands, sfc)
+# sftk_removeIslands --------------------------------------
+S3method(sft_removeIslands, sf)
+S3method(sft_removeIslands, sfc)

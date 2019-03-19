@@ -8,8 +8,12 @@ Author: Authors@R: c(person("Jean Pierre", "Decorps", role = c("aut", "cre"),
 Maintainer: Jean Pierre Decorps <jp.decorps@epiconcept.fr>
 Description: Edit and simplify 'sf' objects. This is pure R/R6 code, not a wrapper around
     a 'javascript' library and do not uses V8 engine.
-Depends: R (>= 3.5.1), sf (>= 0.7), rlist
+Depends: R (>= 3.5.0), sf (>= 0.7), rlist, lwgeom, ggplot2
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

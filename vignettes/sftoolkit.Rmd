@@ -1,0 +1,167 @@
+---
+title: "sftoolkit"
+subtitle: "An alternative to rmapshaper"
+author: "Jean Pierre Decorps"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+----------------------------------
+  
+\vspace{4cm}
+
+| **Abstract** |
+| :------------------------------------------------------------------------------ |
+| *sftoolkit* is a **R** package that enables the user to edit and simplify the geometry of maps for geostatistics. Its main goal is to offer an alternative to the *rmapshaper* package that encapsulates/wraps around the **mapshaper** program, written in *javascript* and providing the *simplify* function implementing *Mahes Visvalingam*'s famous algorithm.|
+| *sftoolkit* works only on sf (Simple Feature) geometry, it is writen in full **R** code, and don't use external program to run|
+
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+\newpage
+# *sftoolkit* functions
+
+| Function | Description |
+| :--------------- | :----------------------------------------------------------
+| *sft_clip*          | Remove features or portions of features that fall outside a clipping area.
+| *sft_dissolve*      | Aggregate shapes in a polygon or point layer.
+| *sft_erase*         | Remove features or portions of features that fall inside a specified area
+| *sft_explode*       | Convert multipart lines or polygons to singlepart
+| *sft_filter_fields* | Delete fields in the attribute table
+| *sft_getIslands*    | Get all islands
+| *sft_removeIslands* | Remove small detached polygons (islands)
+| *sft_innerlines*    | Create a line layer consisting of shared boundaries with no attribute data
+| *sft_lines*         | Convert polygons to topological boundaries (lines)
+| *sft_points*        | Create points from a polygon layer
+| *sft_simplify*      | Topologically-aware geometry simplification.
+
+| *sftoolkit*            | *rmapshaper*         | sft release  | Status
+| :---------------------------- | :---------------------------| :-----------: |---------
+| *sft_clip*             | *ms_clip*            |  ?  | TODO     
+| *sft_dissolve*         | *ms_dissolve*        |  ?  | TODO     
+| *sft_erase*            | *ms_erase*           |  ?  | TODO     
+| *sft_explode*          | *ms_explode*         |  ?  | TODO     
+| *sft_filter_fields*    | *ms_filter_fields*   |  ?  | TODO     
+| *sft_getIslands*       | **NA**               | 0.1 | **DONE**     
+| *sft_removeIslands*    | *ms_filter_islands*  | 0.1 | **DONE**     
+| *sft_innerLines*       | *ms_innerlines*      | 0.1 | TODO     
+| *sft_lines*            | *ms_lines*           |  ?  | TODO     
+| *sft_points*           | *ms_points*          |  ?  | TODO     
+| *sft_simplify*         | *ms_simplify*        |  ?  | TODO     
+
+\newpage
+# Working with "Tasmania"
+\par\noindent\rule[20pt]{\textwidth}{0.4pt}
+```{r message=FALSE, fig.height=6.5, fig.align='center', fig.cap="Map of Tasmania", fig.pos="h", out.extra=""}
+library(sftoolkit)
+library(ggplot2)
+data("Tasmania")
+
+ggplot() + geom_sf(data=Tasmania, fill=NA, color="black", size = 0.25)+theme_light()
+```
+
+\newpage
+```{r message=FALSE, fig.height=6.5, fig.align='center', fig.cap="Municipalities of Tasmania", fig.pos="h", out.extra=""}
+library(sftoolkit)
+library(ggplot2)
+data("Tasmania")
+
+ggplot() + geom_sf(data=Tasmania, aes(fill=NAME_2), color="black", size = 0.25)+theme_light()
+```
+
+\newpage
+## Tasmania without sub-regions
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without inner lines", fig.pos="h", out.extra="", cache=FALSE, message=FALSE}
+TASM0 <- sf::st_union(Tasmania)
+
+ggplot() + geom_sf(data = TASM0, fill=NA, color="black", size = 0.25)+theme_light()
+
+```
+
+
+\newpage
+# sft_getIslands
+\par\noindent\rule[20pt]{\textwidth}{0.4pt}
+```{r fig.height=6.5, fig.align='center', fig.cap="Small Islands of Tasmania", fig.pos="h", out.extra="", cache=FALSE, message=FALSE}
+Islands <- sft_getIslands(Tasmania)
+ggplot() + geom_sf(data=Tasmania, fill=NA, color="black", size = 0.25)+theme_light() +
+  geom_sf(data=Islands, fill=NA, color="red", size = 0.25)+theme_light()
+
+```
+
+*sft_getIslands* uses a raw force method. In the case where the map has several regions, the largest area of each region is removed from the result list. The case where the map represents a single administrative region is discussed below.
+
+\newpage
+## Tasmania with no sub-regions
+```{r  fig.height=6.5, fig.align='center', fig.cap="Tasmania with no sub-regions", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+Islands <- sft_getIslands(sf::st_union(Tasmania))
+ggplot() + geom_sf(data=Islands, fill=NA, color="red", size = 0.25)+theme_light()
+```
+
+When a map does not have sub-regions, all polygons are considered islands. We must use the *forget* parameter to remove a given number of the largest polygons from the result list. See below.
+
+\newpage
+## Tasmania with no sub-regions and *forget=1*
+```{r fig.height=6.5, fig.align='center', fig.cap="Islands with forget=1", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+Islands <- sft_getIslands(TASM0, forget = 1)
+ggplot() + geom_sf(data=Islands, fill=NA, color="red", size = 0.25)+theme_light()
+```
+
+\newpage
+# sft_removeIslands
+\par\noindent\rule[20pt]{\textwidth}{0.4pt}
+
+## Removing Islands by areasize
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without small islands < 10km²", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+TAS1 <- sft_removeIslands(Tasmania, mode = "areasize", min_area = 10)
+ggplot() + geom_sf(data=TAS1, fill=NA, color="blue", size = 0.25)+theme_light()
+```
+
+\newpage
+## Tasmania with no sub-regions (by areasize)
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without small islands < 10km²", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+TAS1 <- sft_removeIslands(TASM0, mode = "areasize", min_area = 10)
+ggplot() + geom_sf(data=TAS1, fill=NA, color="blue", size = 0.25)+theme_light()
+```
+
+\newpage
+## Remove islands of Tasmania with mode = "keeplarger"
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without islands (mode = 'keeplarger'", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+TAS1 <- sft_removeIslands(Tasmania, mode = "keeplarger")
+ggplot() + geom_sf(data=TAS1, fill=NA, color="#336633", size = 0.25)+theme_light()
+```
+
+\newpage
+## Tasmania without sub-regions, mode = "keeplarger"
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without islands (mode 'keeplarger', keep = 1)", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+TAS2 <- sft_removeIslands(TASM0, mode = "keeplarger")
+ggplot() + geom_sf(data = TAS2, fill=NA, color="#336633", size = 0.25)+theme_light()
+```
+
+\newpage
+## Tasmania without sub-regions, mode = "keeplarger", keep = 5
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without islands (mode = 'keeplarger', keep = 5)", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+TAS1 <- sft_removeIslands(sf::st_union(Tasmania), mode = "keeplarger", keep = 5)
+ggplot() + geom_sf(data=TAS1, fill="#336633", color="#336633", size = 0.25)+theme_light()
+```
+
+\newpage
+# sft_innerLines
+\par\noindent\rule[20pt]{\textwidth}{0.4pt}
+
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania with colored borders of regions)", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
+TLines <- sft_innerLines(Tasmania)
+ggplot() + geom_sf(data=TAS2, fill=NA, color="#336633", size = 0.25)+
+  geom_sf(aes(geometry=TLines), color="red", size = 0.5)+theme_light()
+```
+
