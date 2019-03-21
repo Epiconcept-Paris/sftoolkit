@@ -4,16 +4,12 @@
 \alias{sft_removeIslands}
 \title{Remove small detached polygons (islands)}
 \usage{
-sft_removeIslands(x, mode = "keeplarger", min_area = 4, keep = 1)
+sft_removeIslands(x, min_area = 4)
 }
 \arguments{
 \item{x}{spatial object to filter of sf or sfc}
 
-\item{mode}{can be one of "keeplarger" "bysize", "byvertices"}
-
 \item{min_area}{minimum area to keep (square kilometer)}
-
-\item{keep}{number of polygons to keep when mode = "keeplarger" and no sub-regions}
 }
 \value{
 like x, sf or sfc

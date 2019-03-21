@@ -121,39 +121,19 @@ ggplot() + geom_sf(data=Islands, fill=NA, color="red", size = 0.25)+theme_light(
 # sft_removeIslands
 \par\noindent\rule[20pt]{\textwidth}{0.4pt}
 
-## Removing Islands by areasize
-```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without small islands < 10km²", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
-TAS1 <- sft_removeIslands(Tasmania, mode = "areasize", min_area = 10)
+## Removing Islands
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without small islands < 10km²", fig.pos="h", out.extra="", cache=FALSE}
+TAS1 <- sft_removeIslands(Tasmania, min_area = 10)
 ggplot() + geom_sf(data=TAS1, fill=NA, color="blue", size = 0.25)+theme_light()
 ```
 
 \newpage
-## Tasmania with no sub-regions (by areasize)
-```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without small islands < 10km²", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
-TAS1 <- sft_removeIslands(TASM0, mode = "areasize", min_area = 10)
+## Tasmania with no sub-regions
+```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without small islands < 10km²", fig.pos="h", out.extra="", cache=FALSE}
+TAS1 <- sft_removeIslands(TASM0, min_area = 10)
 ggplot() + geom_sf(data=TAS1, fill=NA, color="blue", size = 0.25)+theme_light()
 ```
 
-\newpage
-## Remove islands of Tasmania with mode = "keeplarger"
-```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without islands (mode = 'keeplarger'", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
-TAS1 <- sft_removeIslands(Tasmania, mode = "keeplarger")
-ggplot() + geom_sf(data=TAS1, fill=NA, color="#336633", size = 0.25)+theme_light()
-```
-
-\newpage
-## Tasmania without sub-regions, mode = "keeplarger"
-```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without islands (mode 'keeplarger', keep = 1)", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
-TAS2 <- sft_removeIslands(TASM0, mode = "keeplarger")
-ggplot() + geom_sf(data = TAS2, fill=NA, color="#336633", size = 0.25)+theme_light()
-```
-
-\newpage
-## Tasmania without sub-regions, mode = "keeplarger", keep = 5
-```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania without islands (mode = 'keeplarger', keep = 5)", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
-TAS1 <- sft_removeIslands(sf::st_union(Tasmania), mode = "keeplarger", keep = 5)
-ggplot() + geom_sf(data=TAS1, fill="#336633", color="#336633", size = 0.25)+theme_light()
-```
 
 \newpage
 # sft_innerLines
@@ -161,7 +141,6 @@ ggplot() + geom_sf(data=TAS1, fill="#336633", color="#336633", size = 0.25)+them
 
 ```{r fig.height=6.5, fig.align='center', fig.cap="Tasmania with colored borders of regions)", fig.pos="h", out.extra="", cache=FALSE, message=TRUE}
 TLines <- sft_innerLines(Tasmania)
-ggplot() + geom_sf(data=TAS2, fill=NA, color="#336633", size = 0.25)+
-  geom_sf(aes(geometry=TLines), color="red", size = 0.5)+theme_light()
+ggplot() + geom_sf(aes(geometry=TLines), color="red", size = 0.5)+theme_light()
 ```
 
